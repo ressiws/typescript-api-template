@@ -77,12 +77,12 @@ export default class UserEndpoint extends Endpoints {
 | `private`                       | If `true`, requires authorized IP/token |
 
 # 🔐 Auth + Security
-> Handled in `check_request()` and configurable via `config.ts`
+> Handled in `checkRequest()` and configurable via `config.ts`
 
 - ✅ Allowlist by IP (allowed_ips)
 - 🔑 Require Bearer Token (Authorization: Bearer <token>)
 
-You can control this in `config.ts` and `endpoints_config` (block IPs, enforce tokens, etc.).
+You can control this in `config.ts` (block IPs, enforce tokens, etc.).
 
 # 🛠 Usage
 ```bash

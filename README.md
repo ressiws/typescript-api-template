@@ -5,7 +5,7 @@
 [![Built with PNPM](https://img.shields.io/badge/PNPM-%23F69220.svg?logo=pnpm&logoColor=white)](https://pnpm.io/)
 [![RESTful API](https://img.shields.io/badge/REST-API-blue)](#)
 
-> A scalable and fully REST-based TypeScript API template with automatic route loading, custom builder support, and expressive logging — built for speed, simplicity, and modularity.
+> > A modular and RESTful TypeScript API template with automatic route loading and expressive logging — designed for speed, security, and structure.
 
 # 🚀 Features
 - 🔄 **Automatic Routing** \
@@ -81,7 +81,6 @@ export default class UserEndpoint extends Endpoints {
 
 - ✅ Allowlist by IP (allowed_ips)
 - 🔑 Require Bearer Token (Authorization: Bearer <token>)
-- 📡 Logs unauthorized attempts to Discord
 
 You can control this in `config.ts` and `endpoints_config` (block IPs, enforce tokens, etc.).
 

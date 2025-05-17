@@ -80,7 +80,7 @@ export default class UserEndpoint extends Endpoints {
 > Handled in `checkRequest()` and configurable via `config.ts`
 
 - ✅ Allowlist by IP (allowed_ips)
-- 🔑 Require Bearer Token (Authorization: Bearer <token>)
+- 🔑 Require Bearer Token (Authorization: `Bearer <token>`)
 
 You can control this in `config.ts` (block IPs, enforce tokens, etc.).
 

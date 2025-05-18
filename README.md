@@ -11,8 +11,8 @@
 - 🔄 **Automatic Routing** \
   Drop endpoints in `src/api/` and they’re instantly available — no need to manually register routes.
 
-- 📦 **Custom Builder Compatible**  \
-  Built on top of [`typescript-template-pnpm`](https://github.com/ressiws/typescript-template-pnpm) with full support for custom builders and clean project structure.
+- 📦 **Custom Builder**  \
+  Built on top of [`typescript-template-pnpm`](https://github.com/ressiws/typescript-template-pnpm).
 
 - 📃 **REST + CRUD Only**  \
   All routes follow strict RESTful patterns, making it ideal for clean, predictable API design.

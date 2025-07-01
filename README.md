@@ -87,7 +87,7 @@ router.get("/", (req: Request, res: Response) => {
 export default router;
 ```
 
-# 🛡️ **Middleware Explained** \
+# 🛡️ **Middleware Explained**
   - **Global Middleware**: Runs for every incoming request before routing, logging request method, URL, and client IP.
   - **Route Middleware**: Runs per route after routeMeta is assigned. Validates:
     - If the route is private, only allows requests from whitelisted IPs or a valid Bearer token if enabled.
@@ -103,7 +103,7 @@ This system ensures security and centralized request handling.
 | `version`                       | Version string (e.g., `1.0.0`) for changelog tracking |
 | `private`                       | If `true`, enforces IP/token access restrictions |
 
-# 🔐 **Configuration (`config.ts`)** \
+# 🔐 **Configuration (`config.ts`)**
   - `api_port`: Port the API listens on
   - `api_base_url`: Base URL for logging
   - `allowed_ips`: List of IPs allowed to access private routes

@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * @file loader.ts
  * @description  A file loader that logs messages while loading components or steps.
@@ -6,14 +8,13 @@
 
 import { config } from "@/config.js";
 import { logger } from "./logger.js";
-import { checkRequest, loadRoutes } from "./route-loader.js";
+import { loadRoutes, registerRouteMeta } from "./route-loader.js";
 import express from "express";
 import cors from "cors";
+import compression from "compression";
+import { middleware } from "@/middleware.js";
 
 const app = express();
-
-app.use(cors());
-app.use(express.json());
 
 class Loader {
 	constructor() { }
@@ -38,19 +39,22 @@ class Loader {
                               LOADING ENDPOINTS
                 ===========================================`);
 
-		const endpoints = await loadRoutes();
+		const routes = await loadRoutes();
 
-		for (const { route_path, handler } of endpoints) {
-			const full_path = handler.params && handler.params.length > 0
-				? route_path + "/" + handler.params.map(p => `:${p}`).join("/")
-				: route_path;
+		app.use(cors());
+		app.use(compression());
+		app.use(express.json());
+		app.use(middleware);
 
-			app.get(full_path, async (req, res) => {
-				if (!(await checkRequest(req, res, handler)))
-					return;
+		for (const { route_path, router, meta } of routes) {
+			registerRouteMeta("/api" + route_path, meta);
 
-				await handler.endpoint(req, res);
+			router.use((req, res, next) => {
+				(req as any).routeMeta = meta;
+				next();
 			});
+
+			app.use("/api" + route_path, router);
 		}
 
 		app.listen(config.api_port, () => {

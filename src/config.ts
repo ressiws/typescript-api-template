@@ -24,7 +24,7 @@ export const config = {
 	require_token: false,
 
 	/** Whitelisted IPs allowed to access the API when `block_via_ip` is true */
-	allowed_ips: [""],
+	allowed_ips: ["127.0.0.1"],
 };
 
 // Auto-generate the base URL based on the selected port

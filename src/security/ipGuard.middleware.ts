@@ -15,7 +15,7 @@ import type { NextFunction, Request, Response } from "express";
 const ipHits = new Map<string, { count: number; reset: number }>();
 
 export function ipGuardMiddleware(req: Request, res: Response, next: NextFunction) {
-	if (!config.security.logging.enable) return next();
+	if (!config.security.ipGuard.enable) return next();
 
 	const ip = req.ip;
 	const now = Date.now();

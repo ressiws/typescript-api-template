@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: "20"
+
+    - name: Setup pnpm
+      run: npm install -g pnpm
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: TypeScript check
+      run: pnpm exec tsc --noEmit
+
+    - name: Run ESLint
+      run: pnpm exec eslint "src/**/*.{ts,js}"

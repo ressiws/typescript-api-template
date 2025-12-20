@@ -252,9 +252,9 @@ router.get("/health", (_req, res) => res.json({ status: "ok" }));
 **Success**:
 ```json
 {
-	"status": "success",
-	"data": { ... },
-	"code": "SUCCESS"
+	"status": "ok",
+	"message": "Health check passed.",
+	"data": { ... }
 }
 ```
 
@@ -262,8 +262,9 @@ router.get("/health", (_req, res) => res.json({ status: "ok" }));
 ```json
 {
 	"status": "error",
-	"error": "Rate limit exceeded",
-	"code": "RATE_LIMIT"
+	"code": "RATE_LIMIT",
+	"message": "Too many requests.",
+	"data": null
 }
 ```
 

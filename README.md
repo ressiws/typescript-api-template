@@ -1,7 +1,7 @@
 ![Node.js](https://img.shields.io/badge/node-%3E%3D18-green)
 ![TypeScript](https://img.shields.io/badge/typescript-%3E%3D5-blue)
 ![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
-![Build](https://github.com/ressiws/typescript-api-template/actions/workflows/build.yml/badge.svg)
+![Build](https://github.com/ressiws/typescript-api-template/actions/workflows/ci.yml/badge.svg)
 
 ### typescript-api-template
 **Version:** 1.0.0 \
@@ -182,11 +182,37 @@ This ensures your API is secure by default: no default tokens, no accidental ope
 # Routes & Validation
 - Routes are automatically registered from the `src/routes` folder.
 - Each route can define its own **Zod schema** for validation.
-- Example structure:
-```bash
-src/routes/
- ├─ health.ts
- └─ users.ts
+- Validation middleware is route-specific, ensuring only the routes that need it are validated.
+- Example: `validate({ body: schema, query: schema, params: schema })` per route.
+
+### Example structure
+```ts
+// routes/test.ts
+import { Router } from "express";
+import { z } from "zod";
+import { validate } from "@/core/middlewares/validate.middleware";
+
+const router = Router();
+
+router.post("/", validate({
+	body: z.object({
+		name: z.string().min(1, "Name is required"),
+		age: z.number().int().min(0, "Age must be a non-negative integer"),
+	}),
+}), (req, res) => {
+	// If we reach here, validation passed
+	sendSuccess(res, "Validation passed.", {
+		body: req.body,
+		query: req.query,
+	});
+});
+
+export default router;
+```
+
+- Routes without validation can be defined normally:
+```ts
+router.get("/health", (_req, res) => res.json({ status: "ok" }));
 ```
 
 # Best Practices

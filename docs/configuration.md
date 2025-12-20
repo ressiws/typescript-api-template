@@ -25,7 +25,6 @@ This document describes the configuration structure for **typescript-api-templat
 | `CORS_METHODS` | Allowed HTTP methods (comma-separated) | Optional |
 | `CORS_CREDENTIALS` | Allow credentials | true/false |
 | `HEADERS_ENABLE` | Enable security headers | true/false |
-| `CSP_POLICY` | Content-Security-Policy string | Optional |
 | `IPGUARD_ENABLE` | Enable IP-guard | true/false |
 | `IPGUARD_WINDOW_MS` | Window for IP-guard in ms | 60_000 |
 | `IPGUARD_MAX_REQUESTS` | Max requests per IP | 100 |
@@ -47,7 +46,6 @@ This document describes the configuration structure for **typescript-api-templat
 * Never commit `.env` with production credentials.  
 * Use separate `.env` files per environment (`.env.development`, `.env.production`).  
 * Tune `RATE_LIMIT_*` and `IPGUARD_*` according to expected traffic and security requirements.  
-* Review `CSP_POLICY` to match your frontend resources.  
 
 ---
 
@@ -77,7 +75,6 @@ DB_PASS=password
 # -------------------------------------------------------
 # Headers
 HEADERS_ENABLE=true
-CSP_POLICY=default-src 'self'; frame-ancestors 'none'; base-uri 'none';
 
 # IP Guard
 IPGUARD_ENABLE=true

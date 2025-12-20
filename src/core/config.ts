@@ -106,7 +106,6 @@ export const config = Object.freeze({
 	security: {
 		headers: {
 			enable: parseBooleanStrict(process.env.HEADERS_ENABLE, "HEADERS_ENABLE"),
-			csp: process.env.CSP_POLICY ?? "default-src 'self'; frame-ancestors 'none'; base-uri 'none';"
 		},
 		ipGuard: {
 			enable: parseBooleanStrict(process.env.IPGUARD_ENABLE, "IPGUARD_ENABLE"),

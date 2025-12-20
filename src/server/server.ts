@@ -64,11 +64,20 @@ export async function createServer(): Promise<Application> {
 
 	app.disable("x-powered-by");
 
-	app.use(cors({
-		origin: config.cors.origin ?? "*",
-		methods: config.cors.methods ?? ["GET", "POST", "PUT", "DELETE"],
-		credentials: config.cors.credentials,
-	}));
+	app.use(
+		cors({
+			origin: (origin, callback) => {
+				if (!origin) return callback(null, true);
+
+				const allowedOrigins = config.cors.origin ?? [];
+				if (allowedOrigins.includes(origin)) return callback(null, true);
+
+				callback(new Error("CORS origin not allowed."));
+			},
+			methods: config.cors.methods ?? ["GET", "POST", "PUT", "DELETE"],
+			credentials: config.cors.credentials ?? false,
+		})
+	);
 
 	app.use(compression());
 	app.use(express.json({ limit: "10kb" }));

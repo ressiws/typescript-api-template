@@ -90,21 +90,13 @@ For detailed internal docs, see:
 | **Modular Design** | Routes, middleware, and services are separated for clarity and scalability. |
 
 # Installation
-### 1. Clone the Repository
+### 1. Clone the Repository and Install Dependencies
 ```bash
 git clone https://github.com/ressiws/typescript-api-template.git
 cd typescript-api-template
 pnpm install
-cp .env.example .env
+cp .env.example .env # Copy the .env file and configure your environment variables
 ```
-
-### 2. Install dependencies
-```bash
-pnpm install
-```
-
-### 3. Create your `.env` file
-Use `.env.example` as a reference and configure your environment variables.
 
 # Environment Variables
 |  Variable  | Description | Default / Required |

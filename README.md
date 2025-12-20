@@ -32,6 +32,14 @@
 
 ---
 
+## New here? Read this first
+
+This project is **strict by design**.
+If something feels “broken” (CORS, tokens, headers, validation), it is probably intentional.
+
+👉 Read this before using or opening issues:
+[`docs/why_is_api_strict.md`](docs/why_is_api_strict.md)
+
 # Overview
 typescript-api-template is a **robust and scalable API base** build with **Node.js**, **Typescript**, and **Express**.
 Designed for production from day one, it includes:
@@ -119,11 +127,11 @@ Use `.env.example` as a reference and configure your environment variables.
 | `IPGUARD_WINDOW_MS` | IP guard window (ms) | 60000 |
 | `IPGUARD_MAX_REQUESTS` | Max requests per IP | 100 |
 | `HEADERS_ENABLE` | Enable security headers | true/false |
-| `CSP_POLICY` | Content-Security-Policy | `default-src 'self'; frame-ancestors 'none'; base-uri 'none';` |
 
 
-> [!NOTE]  
-> Leaving `CORS_ORIGIN` or `CORS_METHODS` empty will allow all origins and methods by default.
+[!IMPORTANT]
+If CORS_ORIGIN is defined, only those origins are allowed.
+If it is empty or undefined, browser requests with an Origin header will be blocked.
 
 # Initial Setup & Tokens
 When you first start the API:

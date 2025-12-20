@@ -1,3 +1,8 @@
+![Node.js](https://img.shields.io/badge/node-%3E%3D18-green)
+![TypeScript](https://img.shields.io/badge/typescript-%3E%3D5-blue)
+![License: MIT](https://img.shields.io/badge/license-MIT-lightgrey)
+![Build](https://github.com/ressiws/typescript-api-template/actions/workflows/build.yml/badge.svg)
+
 ### typescript-api-template
 **Version:** 1.0.0 \
 **License:** MIT

@@ -2,10 +2,10 @@
 **Version:** 1.0.0 \
 **License:** MIT
 
----
-
 # Table of Contents
 - [Overview](#overview)
+- [Why Use This Base?](#why-use-this-base)
+- [Documentation](#documentation)
 - [Features](#features)
 - [Installation](#installation)
   - [Clone the Repository](#1-clone-the-repository)
@@ -17,45 +17,50 @@
   - [Build & Start for Production](#build--start-for-production)
 - [Middleware](#middleware)
 - [Routes & Validation](#routes--validation)
+- [Best Practices](#best-practices)
 - [Response Format](#response-format)
 - [Logging](#logging)
 - [Token Management](#token-management)
 - [Security](#security)
-- [Best Practices for Zod & Input Sanitization](#best-practices-for-zod--input-sanitization)
 - [Contributing](#contributing)
 - [License](#license)
-- [Why Use This Base?](#why-use-this-base)
 
 ---
 
 # Overview
-typescript-api-template is a **robust and scalable API base** build with **Node.js**, **Typescript**, **and Express**.
+typescript-api-template is a **robust and scalable API base** build with **Node.js**, **Typescript**, and **Express**.
 Designed for production from day one, it includes:
 
 - Token-based authentication with IP restrictions (`system` and `personal` tokens)
 - Rate limiting per token or IP
 - Global request validation with **Zod** schemas
-- Structured logging for requests, tokens, and errors
-- Configurable CORS support for secure cross-origin requests
-- Security Headers for XSS, clickjacking, and other attacks
-- IP guard for per-IP request protection
-- JSON and payload protection against malformed or oversized requests
-- Modular route registration and middleware
-- Easy-to-use enviroment configuration
-- Automatic token reloading and in-memory caching
+- Structured logging and modular middleware
+- Configurable CORS and payload protection
+- Security headers for XSS, clickjacking, HSTS, CSP
+- IP guard and JSON/payload protection against malformed or oversized requests
+- Automatic token caching and refresh
 
 This base is ideal for **internal tools, enterprise applications, or public APIs** requiring strict security and maintainability.
+
+# Why Use This Base?
+- **Production-ready**: best practices for security, validation, and logging.
+- **Scalable**: Modular design allows easy extension with new routes and middleware.
+- **Enterprise-grade**: Standardized responses, error codes, and global middlewares.
+- **Safe & reliable**: Gracefully handles malformed JSON, large payloads, and invalid requests.
+- **Easy configuration**: Everything controlled via environment variables.
+> Start any Node.js/TypeScript project with security and maintainability out of the box.
 
 # Documentation
 
 For detailed internal docs, see:
 
-- [Routes](./routes.md) – Route structure and Zod validation
+- [Routes](./docs/routes.md) – Route structure and Zod validation
 - [Security](security.md) – Security model, threat mitigation, logging
-- [Architecture](./architecture.md) – Project layout, middleware flow, token refresh
-- [Configuration](./configuration.md) – All environment variables and defaults
+- [Architecture](./docs/architecture.md) – Project layout, middleware flow, token refresh
+- [Configuration](./docs/configuration.md) – All environment variables and defaults
 
-> Note: Tokens must include at least one allowed IP. There is no default fallback token.
+> [!NOTE]  
+> Tokens require at least one allowed IP; there is no default fallback token.
 
 # Features
 | Feature | Description |
@@ -65,9 +70,9 @@ For detailed internal docs, see:
 | **Validation** | Automatic request validation using Zod for body, query, and params. |
 | **Logging** | Detailed request and error logging with token context and duration. |
 | **CORS** | Configurable allowed origins, methods, and credentials. |
-| **Security Headers** | Adds recomended HTTP headers to protect against XSS, clickjacking, and other attacks. |
+| **Security Headers** | Helmet-powered headers including HSTS, frameguard, referrer policy, CSP |
 | **IP Guard** | Limits requests per IP to prevent abuse and brute-force attacks. Configurable via `.env` |
-| **JSON & Paylod Protection** | Rejects malformed JSON, oversized requests (>10kb), and unexpected fields. Ensures server stability |
+| **JSON & Payload Protection** | Rejects malformed JSON, oversized requests (>10kb), and unexpected fields. Ensures server stability |
 | **Hot Token Reload** | Tokens are refreshed every minute without server restart. |
 | **Modular Design** | Routes, middleware, and services are separated for clarity and scalability. |
 
@@ -76,6 +81,8 @@ For detailed internal docs, see:
 ```bash
 git clone https://github.com/ressiws/typescript-api-template.git
 cd typescript-api-template
+pnpm install
+cp .env.example .env
 ```
 
 ### 2. Install dependencies
@@ -165,15 +172,7 @@ On startup, the server will:
 This ensures your API is secure by default: no default tokens, no accidental open access.
 
 # Middleware
-All middleware is automatically applied globally:\
-**1. Authentication** - Validates token, IP, and expiration.\
-**2. Rate Limiting** - Enforces request limits per token/IP.\
-**3. IP Guard** - Limits requests per IP to prevent abuse.\
-**4. Validation** - Validates request body, query, and params using Zod schemas. Rejects malformed JSON or unexpected fields.\
-**5. Logging** - Logs requests, status codes, token info, and duration.\
-**6. CORS & Compression** - Configurable cross-origin support and response compression.\
-**7. Security Headers** - Adds recomended headers (CSP, HSTS, X-Frame-Options, etc.)\
-**8. Error Handler** - Unified error responses with structured error codes.
+- Applied globally: Authentication, Rate Limiting, IP Guard, Validation, Logging, CORS, Compression, Security Headers, Error Handler.
 
 # Routes & Validation
 - Routes are automatically registered from the `src/routes` folder.
@@ -185,34 +184,13 @@ src/routes/
  └─ users.ts
 ```
 
-# Best Practices for Zod & Input Sanitization
-- Always define a schema for `body`, `query`, and `params`.
-- Use `transform` or `refine` for sanitization (trim strings, parse numbers, escape - HTML).
-- Reject invalid payloads immediately to prevent downstream logic from executing.
-- Never coerce automatically in business logic—always validate first.
-- Example:
-```ts
-import { z } from "zod";
-
-export const createUserSchema = z.object({
-  username: z.string().min(3).max(32).transform(s => s.trim()),
-  email: z.string().email().transform(s => s.toLowerCase()),
-  age: z.number().optional()
-});
-
-router.post("/users", async (req, res) => {
-  // req.body is already validated and sanitized
-  const user = req.body;
-  // business logic...
-  res.json({ status: "success", data: user, code: "SUCCESS" });
-});
-```
-
-_Always sanitize and validate all user inputs._
+# Best Practices
+- Validate and sanitize `body`, `query`, `params`
+- Use `.transform` or `.refine` for trimming, escaping, or parsing
+- Reject invalid input early
+- Never coerce in business logic
 
 # Response Format
-All API responses are standardized:
-
 **Success**:
 ```json
 {
@@ -232,14 +210,8 @@ All API responses are standardized:
 ```
 
 # Logging
-- Every request logs: method, path, status code, token info, duration.
-- Token load and refresh logs included.
-- Validation errors logged with route info.
-> Example:
-```less
-[INFO] [REQ] GET /tokens | Status: 200 | TokenID:1 Type:system | Duration: 3.90ms
-[WARN] Validation failed for POST /users: Invalid email
-```
+- Logs requests, status codes, token info, duration
+- Logs validation and token refresh events
 
 # Token Management
 - Tokens are loaded from the database into memory at startup.
@@ -247,23 +219,12 @@ All API responses are standardized:
 - Supports `personal` or `system` tokens with allowed IPs and optional max requests.
 
 # Security
-- **IP-bound tokens** - Requests from unauthorized IPs are blocked.
-- **Rate-limiting** - Prevents abuse and brute-force attacks.
-- **IP Guard** - Limits requests per IP for extra protection.
-- **Validation middleware** - Prevents malformed requests, oversized payloads, or unexpected fields.
-- **CORS** - Configurable for controlled access.
-- **Security Headers** - Protect against common attacks (XSS, clickjacking, etc.)
+- Helmet headers for HSTS, X-Frame-Options, XSS protection, CSP.
+- IP-bound tokens & IP guard.
+- Validation prevents malformed/oversized requests.
 
 # Contributing
 - See [CONTRIBUTING.md](CONTRIBUTING.md) for code standards, commit messages, and PR workflow.
 
 # License
 MIT License © 2025 Swisser
-
-# Why Use This Base?
-- **Production-ready**: built with best practices for security, validation, and logging.
-- **Scalable**: Modular design allows easy extension with new routes and middleware.
-- **Enterprise-grade**: standardized responses, error codes, and global middlewares.
-- **Safe & reliable**: handles malformed JSON, large payloads, and invalid requests gracefully.
-- **Easy configuration**: everything controlled via environment variables for flexibility.
-> Use typescript-api-template as your **starting point for any Node.js/TypeScript enterprise project**. It gives you security, reliability, and maintainability out of the box.

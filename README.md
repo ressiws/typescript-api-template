@@ -17,7 +17,7 @@
   - [Install dependencies](#2-install-dependencies)
   - [Create your `.env` file](#3-create-your-env-file)
 - [Environment Variables](#environment-variables)
-- [Usage](#usage)
+- [Initial Setup & Tokens](#initial-setup--tokens)
   - [Start in Development](#start-in-development)
   - [Build & Start for Production](#build--start-for-production)
 - [Middleware](#middleware)
@@ -127,10 +127,25 @@ Use `.env.example` as a reference and configure your environment variables.
 
 # Initial Setup & Tokens
 When you first start the API:
-1. **Database tables** are automatically created if they don't exist (currently only `auth_tokens` is required).
-2. **No tokens are created automatically**. You must insert at least one token manually to acess the API.
+1. **Database tables** are automatically created if they don't exist (currently only `auth_tokens`).
+2. **If no tokens are found in the database**, the API will:
+- Automatically generate a secure token
+- Insert it into the database
+- **Print the token to the console once**
 
-Example SQL to create a personal token:
+This guarantees the API is **never exposed without authentication**, while still being usable on first boot.
+
+> [!WARNING]  
+> The generated token is shown **only once** on startup, Copy it immediately and store it securely.
+
+Example console output:
+```text
+[INFO] Initial token created: 8f3c1d9e6c1a9b4e...
+```
+
+You can later manage tokens directly in the database.
+
+### Manual Token Creation (Optional):
 ```sql
 INSERT INTO auth_tokens
 (token, name, type, allowed_ips, max_requests, created_at, expires_at)
@@ -146,9 +161,9 @@ VALUES
 );
 ```
  
-> `created_at` uses Unix timestamp in seconds. \
-> `expires_at` uses Unix timestamp,. is optional; leave NULL for a non-expiring token. \
-> Make sure your token is secure and never commit it to version control.
+- `created_at` uses Unix timestamp in seconds. \
+- `expires_at` is optional; (`NULL` = no expiration) \
+- Tokens are **IP-bound**, requests from unauthorized IPs will be rejected.
 
 ### Database Setup
 Before running the server, make sure to update the database configuration in `src/core/services/database.ts`:
@@ -158,10 +173,9 @@ export enum DatabaseType {
 }
 ```
 
-Your MySQL user must have access to this database. The table `auth_tokens` will be automatically created if it does not exist, and an initial token will be generated for you.
-
+Your MySQL user must have access to this database.
 > [!IMPORTANT]  
-> If you don't change this to match your actual database, the server will fail to start.
+> If this value does not match your actual database name, the server **will fail at startup**.
 
 ### Startup Flow:
 ```bash
@@ -171,10 +185,15 @@ pnpm run start # Production
 ```
 
 On startup, the server will:
-- Log that it created any missing tables.
-- Fail if no tokens are loaded (you must create at least one).
+- Ensure required tables exist
+- Create an initial token **only if none exist**
+- Log the generated token to the console (once)
+- Continue normally if tokens already exist
 
-This ensures your API is secure by default: no default tokens, no accidental open access.
+This ensures your API is secure by default:
+- No open access
+- No hardcoded tokens
+- No silent misconfiguration
 
 # Middleware
 - Applied globally: Authentication, Rate Limiting, IP Guard, Validation, Logging, CORS, Compression, Security Headers, Error Handler.

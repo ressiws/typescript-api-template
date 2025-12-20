@@ -8,32 +8,31 @@
  */
 
 import { config } from "@/core/config";
-import type { TokenContext } from "@/core/types";
+import { sendError } from "@/core/helpers/response.helper";
+import { logger } from "@/core/logger";
 import type { NextFunction, Request, Response } from "express";
+import type { ZodSchema } from "zod";
 
-declare global {
-	namespace Express {
-		interface Request {
-			startTime?: number;
-			token?: TokenContext;
-		}
-	}
+export interface RouteSchemas {
+	body?: ZodSchema<any>;
+	query?: ZodSchema<any>;
+	params?: ZodSchema<any>;
 }
 
-export function validateMiddleware(req: Request, res: Response, next: NextFunction) {
-	if (!config.security.validate.enable) return next();
+export function validate(schema: RouteSchemas) {
+	return (req: Request, res: Response, next: NextFunction) => {
+		if (!config.security.validate.enable) return next();
 
-	try {
-		const routeSchema = (req.route?.stack?.[0]?.handle as any)?.schema;
-		if (!routeSchema) return next();
+		try {
+			if (schema.body) req.body = schema.body.parse(req.body);
+			if (schema.query) req.query = schema.query.parse(req.query);
+			if (schema.params) req.params = schema.params.parse(req.params);
 
-		if (routeSchema.body) req.body = routeSchema.body.parse(req.body);
-		if (routeSchema.query) req.query = routeSchema.query.parse(req.query);
-		if (routeSchema.params) req.params = routeSchema.params.parse(req.params);
-
-		return next();
-	}
-	catch (err: any) {
-		return next(err);
-	}
+			return next();
+		}
+		catch (error: any) {
+			logger.warn(`Validation failed: ${error.message}`);
+			return sendError(res, "VALIDATION_ERROR", 400);
+		}
+	};
 }

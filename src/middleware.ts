@@ -13,14 +13,12 @@ import { ipGuardMiddleware } from "./security/ipGuard.middleware";
 import { jsonErrorMiddleware } from "./security/jsonError.middleware";
 import { logRequestMiddleware } from "./security/logRequest.middleware";
 import { rateLimitMiddleware } from "./security/rateLimit.middleware";
-import { validateMiddleware } from "./security/validate.middleware";
 
 export function middleware(app: Application) {
 	app.use(securityHeadersMiddleware);
 	app.use(ipGuardMiddleware);
 	app.use(logRequestMiddleware);
 	app.use(jsonErrorMiddleware);
-	app.use(validateMiddleware);
 	app.use(authMiddleware);
 	app.use(rateLimitMiddleware);
 }

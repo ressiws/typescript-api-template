@@ -69,7 +69,7 @@ After running the script, k6 will display a summary:
 
 ### Key Metrics
 - **Checks** - Percentage of requests that returned expected status or response.
-- **HTTP **request duration** – Latency for requests.
+- **HTTP request duration** – Latency for requests.
 - **HTTP requests** - Total number of requests sent.
 - **VU** - Active virtual users during the test.
 

@@ -15,8 +15,6 @@
 - [Installation](#installation)
 - [Environment Variables](#environment-variables)
 - [Initial Setup & Tokens](#initial-setup--tokens)
-  - [Start in Development](#start-in-development)
-  - [Build & Start for Production](#build--start-for-production)
 - [Middleware](#middleware)
 - [Routes & Validation](#routes--validation)
 - [Best Practices](#best-practices)

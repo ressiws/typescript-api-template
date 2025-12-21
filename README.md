@@ -158,8 +158,8 @@ VALUES
 );
 ```
  
-- `created_at` uses Unix timestamp in seconds. \
-- `expires_at` is optional; (`NULL` = no expiration) \
+- `created_at` uses Unix timestamp in seconds.
+- `expires_at` is optional; (`NULL` = no expiration)
 - Tokens are **IP-bound**, requests from unauthorized IPs will be rejected.
 
 ### Database Setup

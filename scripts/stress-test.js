@@ -31,6 +31,7 @@ function randomEndpoint() {
 	return endpoints[Math.floor(Math.random() * endpoints.length)];
 }
 
+// Utility to pick a random token
 function randomToken() {
 	return TOKENS[Math.floor(Math.random() * TOKENS.length)];
 }
@@ -41,21 +42,18 @@ export default function () {
 	const url = `${API_URL}${endpoint}`;
 
 	const headers = {
-		"Authorization": `Bearer ${token}`,
+		"Authorization": `${token}`,
 	};
 
 	const res = http.get(url, { headers, tags: { endpoint } });
-
 	const result = check(res, {
 		"status is 200": r => r.status === 200,
 	});
 
-	if (!result) {
+	if (!result)
 		console.warn(`❌ Endpoint failed: ${endpoint}, status: ${res.status}`);
-	}
-	else {
+	else
 		console.info(`✅ Endpoint succeeded: ${endpoint}`);
-	}
 
 	// Sleep a tiny random amount to spread requests
 	sleep(Math.random() * 0.1);

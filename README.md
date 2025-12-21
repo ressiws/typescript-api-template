@@ -13,9 +13,6 @@
 - [Documentation](#documentation)
 - [Features](#features)
 - [Installation](#installation)
-  - [Clone the Repository](#1-clone-the-repository)
-  - [Install dependencies](#2-install-dependencies)
-  - [Create your `.env` file](#3-create-your-env-file)
 - [Environment Variables](#environment-variables)
 - [Initial Setup & Tokens](#initial-setup--tokens)
   - [Start in Development](#start-in-development)
@@ -107,12 +104,13 @@ cp .env.example .env # Copy the .env file and configure your environment variabl
 | `DB_HOST`  | Database host | Required |
 | `DB_USER`  | Database username | Required |
 | `DB_PASS`  | Database password | Required |
+| `DB_NAME`  | Database name | Required |
 | `AUTH_ENABLE` | Enable authentication middleware | true/false |
 | `RATE_LIMIT_ENABLE` | Enable rate limiting | true/false |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window (ms) | 60000 |
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 100 |
 | `LOGGING_ENABLE` | Enable request/error logging | true/false |
-| `CORS_ORIGIN` | Allowed origins (comma-separated) | Optional |
+| `CORS_ORIGIN` | Allowed origins (comma-separated). If empty or undefined, browser requests with an Origin header will be blocked. | Optional |
 | `CORS_METHODS`| Allowed HTTP methods (comma-separated) | Optional |
 | `CORS_CREDENTIALS` | Enable credentials (`true`/`false`) | Optional |
 | `IPGUARD_ENABLE` | Enable IP-based guard | true/false |
@@ -122,8 +120,7 @@ cp .env.example .env # Copy the .env file and configure your environment variabl
 
 
 [!IMPORTANT]
-If CORS_ORIGIN is defined, only those origins are allowed.
-If it is empty or undefined, browser requests with an Origin header will be blocked.
+If CORS_ORIGIN is defined, only those origins are allowed, If it is empty or undefined, browser requests with an Origin header will be blocked.
 
 # Initial Setup & Tokens
 When you first start the API:
@@ -154,7 +151,7 @@ VALUES
   'YOUR_SECRET_TOKEN', -- token
   'Admin token', -- token name
   'personal', -- token type
-  '["127.0.0.1"]', -- array of allowed IPs
+   -- Allowed IPs are stored in a dedicated table (`auth_token_ips`) with one IP per row
   1000, -- max requests
   UNIX_TIMESTAMP(),
   NULL -- expiration date (uses Unix timestamp in seconds)
@@ -166,16 +163,11 @@ VALUES
 - Tokens are **IP-bound**, requests from unauthorized IPs will be rejected.
 
 ### Database Setup
-Before running the server, make sure to update the database configuration in `src/core/services/database.ts`:
-```ts
-export enum DatabaseType {
-	Main = "api_swisser" // <-- Change this to the name of your database
-}
-```
-
 Your MySQL user must have access to this database.
 > [!IMPORTANT]  
 > If this value does not match your actual database name, the server **will fail at startup**.
+
+> Note: IPs are stored in `auth_token_ips` linked by `token_id`.
 
 ### Startup Flow:
 ```bash

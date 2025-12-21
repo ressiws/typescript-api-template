@@ -69,6 +69,7 @@ APP_VERSION=1.0.0
 DB_HOST=localhost
 DB_USER=root
 DB_PASS=password
+DB_NAME=api
 
 # -------------------------------------------------------
 # Security settings

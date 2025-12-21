@@ -14,7 +14,3 @@ export const { dirname: __dirname } = makeLocations(import.meta.url);
 export function getUnixTimestamp(value?: number | Date) {
 	return value ? Math.floor(new Date(value).getTime() / 1000) : Math.floor(Date.now() / 1000);
 }
-
-export function isRowArray(value: unknown): value is Record<string, unknown>[] {
-	return Array.isArray(value);
-}

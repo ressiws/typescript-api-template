@@ -131,5 +131,6 @@ export const config = Object.freeze({
 		host: requireEnv("DB_HOST"),
 		user: requireEnv("DB_USER"),
 		password: requireEnv("DB_PASS"),
+		database: requireEnv("DB_NAME"),
 	}
 });

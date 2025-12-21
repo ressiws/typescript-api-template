@@ -18,6 +18,12 @@
 	},
 	"include": [
 		"src",
-		"./.env",
-	]
+		"./.env"
+	],
+	"exclude": [
+		"node_modules",
+		"dist",
+		"scripts",
+		"docs"
+	],
 }

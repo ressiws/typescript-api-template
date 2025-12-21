@@ -14,8 +14,10 @@ import cors from "cors";
 import type { Application } from "express";
 import express from "express";
 import fs from "fs";
+import type http from "http";
 import path from "path";
 
+import { database } from "@/core/services/database";
 import { loadTokens } from "@/core/services/token.service";
 import { middleware } from "@/middleware";
 import { pathToFileURL } from "url";
@@ -89,20 +91,34 @@ export async function createServer(): Promise<Application> {
 	return app;
 }
 
-export async function startServer(): Promise<Application> {
+export async function startServer(): Promise<http.Server> {
 	const count = await loadTokens();
 	if (count === 0)
 		throw new Error("No tokens loaded, aborting startup..");
 
-	setInterval(() => {
-		loadTokens().catch(e => logger.error(`Token refresh failed: ${e}`));
-	}, 60_000);
-
 	const app = await createServer();
-
-	app.listen(config.app.port, () => {
+	const server = app.listen(config.app.port, () => {
 		logger.info(`Server running on port: ${config.app.port}`);
 	});
 
-	return app;
+	const shutdown = async (signal: string) => {
+		logger.warn(`Recieved ${signal}, shutting down server..`);
+
+		server.close(async () => {
+			logger.info("HTTP server closed.");
+			await database.close();
+			process.exitCode = 0;
+		});
+	};
+
+	process.on("SIGTERM", shutdown);
+	process.on("SIGINT", shutdown);
+
+	setInterval(() => {
+		loadTokens().catch(e =>
+			logger.error(`Token refresh failed: ${e}`)
+		);
+	}, 60_000);
+
+	return server;
 }

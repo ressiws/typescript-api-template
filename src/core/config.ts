@@ -6,7 +6,9 @@
  * Copyright (c) 2025 swisser
  */
 
-import "dotenv/config";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 /**
  * @description Valid Node environments

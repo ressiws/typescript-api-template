@@ -24,6 +24,7 @@ export class Database {
 	 * A single pool is used for the entire application lifecycle.
 	 */
 	private pool: mysql.Pool;
+	private closed = false;
 
 	/**
 	 * Initializes the database connection pool using environment configuration.
@@ -140,6 +141,14 @@ export class Database {
 		);
 
 		logger.info(`Initial token created (printed once): ${token}`);
+	}
+
+	public async close(): Promise<void> {
+		if (this.closed) return;
+		this.closed = true;
+
+		logger.info(`Closing database connection pool..`);
+		await this.pool.end();
 	}
 }
 

@@ -8,14 +8,12 @@
 
 import { logger } from "./logger";
 
-// Erros não capturados
+// Uncaught Exception
 process.on("uncaughtException", (error) => {
 	logger.error(`Uncaught exception: ${error}`);
-	process.exit(1);
 });
 
-// Promises rejeitadas não tratadas
+// Unhandled Promise Rejections
 process.on("unhandledRejection", (reason) => {
 	logger.error(`Unhandled promise rejection: ${reason}`);
-	process.exit(1);
 });

@@ -25,7 +25,9 @@ async function main() {
 	}
 	catch (error) {
 		logger.error(`Application failed to start. ${error}`);
-		process.exit(1);
+		await database.close().catch(err => logger.error(`Failed to close DB pool: ${err}`));
+		process.exitCode = 1;
+		throw error;
 	}
 }
 

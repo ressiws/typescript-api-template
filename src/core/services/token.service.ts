@@ -18,10 +18,10 @@
  * Copyright (c) 2025 swisser
  */
 
-import { logger } from "../logger.js";
-import { database } from "./database.js";
-import type { TokenContext, TokenType } from "../types/index.js";
 import { getUnixTimestamp, normalizeIp } from "../../utils/utils.js";
+import { logger } from "../logger.js";
+import type { TokenContext, TokenType } from "../types/index.js";
+import { database } from "./database.js";
 
 /**
  * In-memory cache of authentication tokens.
@@ -113,7 +113,7 @@ export async function loadTokens(): Promise<number> {
 	 * ensures readers never see a partially loaded token set
 	 */
 	tokens = newTokens;
-	logger.info(`Loaded ${tokens.size} tokens into memory.`);
+	logger.debug(`Loaded ${tokens.size} tokens into memory.`);
 	return tokens.size;
 }
 

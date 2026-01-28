@@ -6,8 +6,8 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "@/core/config";
-import { sendSuccess } from "@/core/helpers/response.helper";
+import { config } from "../core/config.js";
+import { sendSuccess } from "../core/helpers/response.helper.js";
 import type { Request, Response, Router } from "express";
 import express from "express";
 

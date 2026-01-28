@@ -6,9 +6,9 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "@/core/config";
-import { logger } from "@/core/logger";
-import { __dirname } from "@/utils/utils";
+import { config } from "../core/config.js";
+import { logger } from "../core/logger.js";
+import { __dirname } from "../utils/utils.js";
 import compression from "compression";
 import cors from "cors";
 import type { Application } from "express";
@@ -17,9 +17,10 @@ import fs from "fs";
 import type http from "http";
 import path from "path";
 
-import { database } from "@/core/services/database";
-import { loadTokens } from "@/core/services/token.service";
-import { middleware } from "@/middleware";
+import { database } from "../core/services/database.js";
+import { loadTokens } from "../core/services/token.service.js";
+import { sendError } from "../core/helpers/response.helper.js";
+import { middleware } from "../middleware.js";
 import { pathToFileURL } from "url";
 
 export async function registerRoutes(app: Application) {
@@ -65,6 +66,7 @@ export async function createServer(): Promise<Application> {
 	const app = express();
 
 	app.disable("x-powered-by");
+	app.set("trust proxy", config.app.trustProxy);
 
 	app.use(
 		cors({
@@ -88,6 +90,21 @@ export async function createServer(): Promise<Application> {
 	middleware(app);
 
 	await registerRoutes(app);
+
+	// 404 handler (after all routes)
+	app.use((_req, res) => sendError(res, "NOT_FOUND", 404));
+
+	// Final error handler
+	app.use((err: unknown, _req: express.Request, res: express.Response, next: express.NextFunction) => {
+		if (res.headersSent) return next(err);
+
+		if (err instanceof Error && err.message === "CORS origin not allowed.")
+			return sendError(res, "CORS_NOT_ALLOWED", 403);
+
+		logger.error("Unhandled error.", err);
+		return sendError(res, "INTERNAL_ERROR", 500);
+	});
+
 	return app;
 }
 
@@ -101,8 +118,11 @@ export async function startServer(): Promise<http.Server> {
 		logger.info(`Server running on port: ${config.app.port}`);
 	});
 
+	let tokenRefreshTimer: ReturnType<typeof setInterval> | undefined;
+
 	const shutdown = async (signal: string) => {
 		logger.warn(`Recieved ${signal}, shutting down server..`);
+		if (tokenRefreshTimer) clearInterval(tokenRefreshTimer);
 
 		server.close(async () => {
 			logger.info("HTTP server closed.");
@@ -114,11 +134,12 @@ export async function startServer(): Promise<http.Server> {
 	process.on("SIGTERM", shutdown);
 	process.on("SIGINT", shutdown);
 
-	setInterval(() => {
+	tokenRefreshTimer = setInterval(() => {
 		loadTokens().catch(e =>
 			logger.error(`Token refresh failed: ${e}`)
 		);
 	}, 60_000);
+	tokenRefreshTimer.unref?.();
 
 	return server;
 }

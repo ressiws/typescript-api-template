@@ -6,11 +6,12 @@
  * Copyright (c) 2025 swisser
  */
 
-import { logger } from "./logger";
+import { logger } from "./logger.js";
 
 // Uncaught Exception
 process.on("uncaughtException", (error) => {
-	logger.error(`Uncaught exception: ${error}`);
+	logger.fatal(`Uncaught exception: ${error}`);
+	process.exitCode = 1;
 });
 
 // Unhandled Promise Rejections

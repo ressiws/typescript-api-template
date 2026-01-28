@@ -1,24 +1,18 @@
 {
 	"compilerOptions": {
 		"target": "ES2020",
-		"module": "ESNext",
-		"moduleResolution": "Node",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"outDir": "dist",
 		"rootDir": "src",
-		"baseUrl": "src",
-		"paths": {
-			"@/*": [
-				"*"
-			]
-		},
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
+		"noEmitOnError": true,
 		"skipLibCheck": true
 	},
 	"include": [
-		"src",
-		"./.env"
+		"src"
 	],
 	"exclude": [
 		"node_modules",

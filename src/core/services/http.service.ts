@@ -8,7 +8,7 @@
 
 import type { AxiosRequestConfig, AxiosResponse } from "axios";
 import axios from "axios";
-import { logger } from "../logger";
+import { logger } from "../logger.js";
 
 export async function httpRequest<T>(url: string, config?: AxiosRequestConfig): Promise<T | null> {
 	try {

@@ -18,10 +18,10 @@
  * Copyright (c) 2025 swisser
  */
 
-import { logger } from "@/core/logger";
-import { database } from "@/core/services/database";
-import type { TokenContext, TokenType } from "@/core/types";
-import { getUnixTimestamp } from "@/utils/utils";
+import { logger } from "../logger.js";
+import { database } from "./database.js";
+import type { TokenContext, TokenType } from "../types/index.js";
+import { getUnixTimestamp, normalizeIp } from "../../utils/utils.js";
 
 /**
  * In-memory cache of authentication tokens.
@@ -100,8 +100,11 @@ export async function loadTokens(): Promise<number> {
 		}
 
 		// Attach allowed IPs (if any)
-		if (row.ip)
-			newTokens.get(row.token)!.allowedIps.push(row.ip);
+		if (row.ip) {
+			const ip = normalizeIp(row.ip);
+			const ctx = newTokens.get(row.token)!;
+			if (ip && !ctx.allowedIps.includes(ip)) ctx.allowedIps.push(ip);
+		}
 	}
 
 

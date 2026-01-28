@@ -6,13 +6,15 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "@/core/config";
-import { sendError } from "@/core/helpers/response.helper";
-import { logger } from "@/core/logger";
+import { config } from "../core/config.js";
+import { sendError } from "../core/helpers/response.helper.js";
+import { logger } from "../core/logger.js";
 import type { NextFunction, Request, Response } from "express";
+import { normalizeIp } from "../utils/utils.js";
 
 type RateEntry = { count: number; expires: number };
 const rateMap = new Map<string, RateEntry>();
+let lastCleanup = 0;
 
 export function rateLimitMiddleware(req: Request, res: Response, next: NextFunction) {
 	if (!config.security.rateLimit.enable)
@@ -22,7 +24,16 @@ export function rateLimitMiddleware(req: Request, res: Response, next: NextFunct
 	const windowMs = config.security.rateLimit.windowMs;
 	const maxRequests = config.security.rateLimit.maxRequests;
 
-	const key = req.token?.type === "personal" ? `token:${req.token.id}` : `ip:${req.ip}`;
+	// Periodically cleanup expired entries to avoid unbounded memory growth
+	if (now - lastCleanup > windowMs) {
+		for (const [key, value] of rateMap) {
+			if (value.expires < now) rateMap.delete(key);
+		}
+		lastCleanup = now;
+	}
+
+	const ip = normalizeIp(req.ip) || "unknown";
+	const key = req.token ? `token:${req.token.id}` : `ip:${ip}`;
 	const max = req.token?.maxRequests ?? maxRequests;
 	const entry = rateMap.get(key);
 

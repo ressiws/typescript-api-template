@@ -6,7 +6,7 @@
  * Copyright (c) 2025 swisser
  */
 
-import { ErrorCodes } from "@/core/errorCodes";
+import { ErrorCodes } from "../errorCodes.js";
 import type { Response } from "express";
 
 export function sendError(res: Response, code: keyof typeof ErrorCodes, statusCode = 400) {

@@ -6,8 +6,8 @@
  * Copyright (c) 2025 swisser
  */
 
-import { sendSuccess } from "@/core/helpers/response.helper";
-import { validate } from "@/security/validate.middleware";
+import { sendSuccess } from "../core/helpers/response.helper.js";
+import { validate } from "../security/validate.middleware.js";
 import type { Router } from "express";
 import express from "express";
 import { z } from "zod";

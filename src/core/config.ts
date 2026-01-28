@@ -13,7 +13,7 @@ dotenv.config();
 /**
  * @description Valid Node environments
  */
-type NodeEnv = "development" | "production";
+type NodeEnv = "development" | "production" | "test";
 
 /**
  * @description Ensures that a required environment variable exists
@@ -56,17 +56,23 @@ function parseBooleanStrict(value: string | undefined, key: string): boolean {
 	if (value === undefined)
 		throw new Error(`Missing boolean environment variable: ${key}`);
 
-	if (value === "true") return true;
-	if (value === "false") return false;
+	const normalized = value.trim().toLowerCase();
+	if (normalized === "true") return true;
+	if (normalized === "false") return false;
 
 	throw new Error(`Invalid boolean for ${key}. Use true or false.`);
+}
+
+function parseBooleanOptional(value: string | undefined, key: string, defaultValue: boolean): boolean {
+	if (value === undefined) return defaultValue;
+	return parseBooleanStrict(value, key);
 }
 
 /**
  * @description Load and validate NODE_ENV
  */
 const nodeEnv = requireEnv("NODE_ENV") as NodeEnv;
-if (!["development", "production"].includes(nodeEnv))
+if (!["development", "production", "test"].includes(nodeEnv))
 	throw new Error(`invalid NODE_ENV: ${nodeEnv}`);
 
 /**
@@ -99,10 +105,11 @@ export const config = Object.freeze({
 		name: requireEnv("APP_NAME"),
 		port: parseNumber(requireEnv("APP_PORT"), "APP_PORT"),
 		version: requireEnv("APP_VERSION"),
+		trustProxy: parseBooleanOptional(process.env.TRUST_PROXY, "TRUST_PROXY", false),
 	},
 	cors: {
 		origin: process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(",").map(o => o.trim()) : undefined,
-		methods: process.env.CORS_METHODS ? process.env.CORS_METHODS.split(",").map(m => m.trim()) : undefined,
+		methods: corsMethods,
 		credentials: parseBooleanStrict(process.env.CORS_CREDENTIALS, "CORS_CREDENTIALS"),
 	},
 	security: {

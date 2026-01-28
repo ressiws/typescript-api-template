@@ -6,13 +6,13 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "@/core/config";
-import { sendError } from "@/core/helpers/response.helper";
-import { logger } from "@/core/logger";
-import type { TokenContext } from "@/core/types";
-import { getUnixTimestamp } from "@/utils/utils";
+import { config } from "../core/config.js";
+import { sendError } from "../core/helpers/response.helper.js";
+import { logger } from "../core/logger.js";
+import type { TokenContext } from "../core/types/index.js";
+import { getUnixTimestamp, normalizeIp } from "../utils/utils.js";
 import type { NextFunction, Request, Response } from "express";
-import { validateToken } from "../core/services/token.service";
+import { validateToken } from "../core/services/token.service.js";
 
 declare global {
 	namespace Express {
@@ -25,7 +25,7 @@ declare global {
 export function authMiddleware(req: Request, res: Response, next: NextFunction) {
 	if (!config.security.auth.enable) return next();
 
-	const ip = req.ip || req.socket.remoteAddress || "";
+	const ip = normalizeIp(req.ip ?? req.socket.remoteAddress);
 	const authHeader = req.headers.authorization;
 
 	if (!authHeader) {
@@ -33,7 +33,7 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 		return sendError(res, "NO_TOKEN", 401);
 	}
 
-	const tokenValue = authHeader.replace("Bearer ", "");
+	const tokenValue = authHeader.replace(/^Bearer\s+/i, "").trim();
 	const token = validateToken(tokenValue);
 
 	if (!token) {

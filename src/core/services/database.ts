@@ -6,10 +6,10 @@
  * Copyright (c) 2025 swisser
  */
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import mysql from "mysql2/promise";
-import { config } from "../config";
-import { logger } from "../logger";
+import { config } from "../config.js";
+import { logger } from "../logger.js";
 
 /**
  * Database helper responsible for:

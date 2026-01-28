@@ -99,18 +99,21 @@ cp .env.example .env # Copy the .env file and configure your environment variabl
 | `NODE_ENV` | Environment mode (`development`, `production`) | Required |
 | `APP_NAME` | Application name | Required |
 | `APP_PORT` | Port number | Required |
+| `APP_VERSION` | Application version | Required |
+| `TRUST_PROXY` | Trust reverse proxy for `req.ip` (`true`/`false`) | false |
 | `DB_HOST`  | Database host | Required |
 | `DB_USER`  | Database username | Required |
 | `DB_PASS`  | Database password | Required |
 | `DB_NAME`  | Database name | Required |
 | `AUTH_ENABLE` | Enable authentication middleware | true/false |
+| `VALIDATE_ENABLE` | Enable request validation middleware (Zod) | true/false |
 | `RATE_LIMIT_ENABLE` | Enable rate limiting | true/false |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window (ms) | 60000 |
-| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 100 |
+| `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 20 |
 | `LOGGING_ENABLE` | Enable request/error logging | true/false |
 | `CORS_ORIGIN` | Allowed origins (comma-separated). If empty or undefined, browser requests with an Origin header will be blocked. | Optional |
 | `CORS_METHODS`| Allowed HTTP methods (comma-separated) | Optional |
-| `CORS_CREDENTIALS` | Enable credentials (`true`/`false`) | Optional |
+| `CORS_CREDENTIALS` | Enable credentials (`true`/`false`) | Required |
 | `IPGUARD_ENABLE` | Enable IP-based guard | true/false |
 | `IPGUARD_WINDOW_MS` | IP guard window (ms) | 60000 |
 | `IPGUARD_MAX_REQUESTS` | Max requests per IP | 100 |
@@ -199,7 +202,8 @@ This ensures your API is secure by default:
 // routes/test.ts
 import { Router } from "express";
 import { z } from "zod";
-import { validate } from "@/core/middlewares/validate.middleware";
+import { sendSuccess } from "../core/helpers/response.helper.js";
+import { validate } from "../security/validate.middleware.js";
 
 const router = Router();
 

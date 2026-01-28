@@ -9,10 +9,11 @@
  * Copyright (c) 2025 Swisser
  */
 
-import { config } from "./core/config";
-import { logger } from "./core/logger";
-import { database } from "./core/services/database";
-import { startServer } from "./server/server";
+import { config } from "./core/config.js";
+import "./core/exceptions.js";
+import { logger } from "./core/logger.js";
+import { database } from "./core/services/database.js";
+import { startServer } from "./server/server.js";
 
 async function main() {
 	try {

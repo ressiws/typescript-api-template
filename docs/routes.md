@@ -16,7 +16,7 @@ It covers:
 Example:
 ```ts
 // health.ts
-import { sendSuccess } from "@/core/helpers/response.helper";
+import { sendSuccess } from "../core/helpers/response.helper.js";
 import type { Request, Response, Router } from "express";
 import express from "express";
 
@@ -44,8 +44,8 @@ src/routes/
 ### Example: Create User
 ```ts
 // routes/users.ts
-import { sendSuccess } from "@/core/helpers/response.helper";
-import { validate } from "@/security/validate.middleware";
+import { sendSuccess } from "../core/helpers/response.helper.js";
+import { validate } from "../security/validate.middleware.js";
 import type { Router } from "express";
 import express from "express";
 import { z } from "zod";
@@ -82,8 +82,8 @@ router.get("/", (req, res) => {
 # Example: Update User
 ```ts
 // routes/users.ts
-import { sendSuccess } from "@/core/helpers/response.helper";
-import { validate } from "@/security/validate.middleware";
+import { sendSuccess } from "../core/helpers/response.helper.js";
+import { validate } from "../security/validate.middleware.js";
 import type { Router } from "express";
 import express from "express";
 import { z } from "zod";

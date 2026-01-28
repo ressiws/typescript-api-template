@@ -6,8 +6,8 @@
  * Copyright (c) 2025 swisser
  */
 
-import { logger } from "@/core/logger";
-import type { TokenContext } from "@/core/types";
+import { logger } from "../core/logger.js";
+import type { TokenContext } from "../core/types/index.js";
 import type { NextFunction, Request, Response } from "express";
 
 declare global {

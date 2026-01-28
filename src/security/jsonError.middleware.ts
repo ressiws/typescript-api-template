@@ -1,28 +1,20 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { NextFunction, Request, Response } from "express";
+import { sendError } from "../core/helpers/response.helper.js";
 
 export function jsonErrorMiddleware(
-	err: any,
+	err: unknown,
 	_req: Request,
 	res: Response,
 	next: NextFunction
 ) {
-	if (err?.type === "entity.parse.failed") {
-		return res.status(400).json({
-			status: "error",
-			code: "INVALID_JSON",
-			message: "Malformed JSON body",
-			data: null
-		});
-	}
+	if (typeof err === "object" && err !== null && "type" in err) {
+		const type = (err as { type?: unknown }).type;
 
-	if (err?.type === "entity.too.large") {
-		return res.status(413).json({
-			status: "error",
-			code: "PAYLOAD_TOO_LARGE",
-			message: "Request body too large",
-			data: null
-		});
+		if (type === "entity.parse.failed")
+			return sendError(res, "INVALID_JSON", 400);
+
+		if (type === "entity.too.large")
+			return sendError(res, "PAYLOAD_TOO_LARGE", 413);
 	}
 
 	next(err);

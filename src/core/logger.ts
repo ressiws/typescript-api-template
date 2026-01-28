@@ -6,7 +6,7 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "./config";
+import { config } from "./config.js";
 
 type LogLevel = "debug" | "info" | "warn" | "error" | "fatal" | "success";
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2025 swisser
  */
 
-import { config } from "@/core/config";
+import { config } from "../core/config.js";
 import type { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 

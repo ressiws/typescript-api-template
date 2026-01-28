@@ -13,10 +13,12 @@ This document describes the configuration structure for **typescript-api-templat
 | `APP_NAME` | Application name | Required |
 | `APP_PORT` | Server port | Required |
 | `APP_VERSION` | App version | Required |
+| `TRUST_PROXY` | Trust reverse proxy for `req.ip` (`true`/`false`) | false |
 | `DB_HOST` | Database host | Required |
 | `DB_USER` | Database user | Required |
 | `DB_PASS` | Database password | Required |
 | `AUTH_ENABLE` | Enables token-based authentication | true/false |
+| `VALIDATE_ENABLE` | Enables request validation (Zod) | true/false |
 | `RATE_LIMIT_ENABLE` | Enables rate-limiting middleware | true/false |
 | `RATE_LIMIT_WINDOW_MS` | Rate limit window in ms | 60_000 |
 | `RATE_LIMIT_MAX_REQUESTS` | Max requests per window | 20 |
@@ -35,7 +37,7 @@ This document describes the configuration structure for **typescript-api-templat
 
 * **Boolean values**: must be `"true"` or `"false"` (case-insensitive).  
 * **Numeric values**: must be integers, validated at startup.  
-* **CORS**: If `CORS_ORIGIN` or `CORS_METHODS` are empty, defaults to allow all.  
+* **CORS**: If `CORS_ORIGIN` is empty/undefined, requests with an `Origin` header are blocked (browser requests).  
 * **Security-critical options**: Always validated; server fails fast if missing or invalid.  
 * **Logging**: Controlled via `LOGGING_ENABLE`. Debug logs disabled automatically in production.
 
@@ -62,6 +64,7 @@ NODE_ENV=production
 APP_NAME=typescript-api-template
 APP_PORT=3000
 APP_VERSION=1.0.0
+TRUST_PROXY=false
 
 # -------------------------------------------------------
 # Database credentials
@@ -81,6 +84,9 @@ HEADERS_ENABLE=true
 IPGUARD_ENABLE=true
 IPGUARD_WINDOW_MS=60000
 IPGUARD_MAX_REQUESTS=100
+
+# Validation
+VALIDATE_ENABLE=true
 
 # Auth
 AUTH_ENABLE=true

@@ -11,3 +11,4 @@ package-lock.json
 
 # Environment Variables:
 .env
+logs/2026-08-21.log

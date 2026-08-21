@@ -1,0 +1,8 @@
+export enum LogCategory {
+	SYSTEM = "SYSTEM",
+	HTTP = "HTTP",
+	SECURITY = "SECURITY",
+	DATABASE = "DATABASE",
+	AUDIT = "AUDIT",
+	APPLICATION = "APPLICATION",
+}

@@ -1,4 +1,4 @@
-import logger from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 
 type ShutdownHandler = () => Promise<void> | void;
 

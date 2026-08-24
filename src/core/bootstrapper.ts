@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { createApp } from "../app.js";
 import { loadConfig } from "../config/index.js";
-import logger from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 import { HttpServer } from "./httpServer.js";
 import { ShutdownManager } from "./shutdown.js";
 

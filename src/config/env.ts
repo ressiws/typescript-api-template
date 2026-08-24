@@ -29,9 +29,9 @@ export function validateEnv(): EnvConfig {
 		.filter(Boolean);
 
 	return {
-		NODE_ENV: parseEnvironment(process.env.NODE_ENV,),
+		NODE_ENV: parseEnvironment(process.env.NODE_ENV),
 		HOST: process.env.HOST ?? "127.0.0.1",
-		PORT: parsePort(process.env.PORT,),
+		PORT: parsePort(process.env.PORT),
 		CORS_ORIGINS: corsOrigins,
 	};
 }

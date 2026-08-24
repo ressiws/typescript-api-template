@@ -4,7 +4,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
-import * as logger from "../logging/logger.js";
+import logger from "../logging/logger.js";
 import type { Router } from "../routing/router.js";
 import { __dirname } from "../utils/paths.js";
 
@@ -30,10 +30,10 @@ async function findRouteFiles(directory: string): Promise<string[]> {
 		}
 
 		if (
-			entry.isFile() &&
-			(entry.name.endsWith(".ts") || entry.name.endsWith(".js")) &&
-			!entry.name.endsWith(".d.ts") &&
-			!entry.name.endsWith(".d.js")
+			entry.isFile()
+			&& (entry.name.endsWith(".ts") || entry.name.endsWith(".js"))
+			&& !entry.name.endsWith(".d.ts")
+			&& !entry.name.endsWith(".d.js")
 		) {
 			files.push(entryPath);
 		}
@@ -42,9 +42,9 @@ async function findRouteFiles(directory: string): Promise<string[]> {
 	return files;
 }
 
-function getRoutePrefix(filePath: string): string {
+function getRoutePrefix(root: string, filePath: string): string {
 	const relativePath = path.relative(
-		ROUTES_DIRECTORY,
+		root,
 		filePath,
 	);
 
@@ -75,7 +75,7 @@ export async function loadRoutes(app: FastifyInstance): Promise<void> {
 	const routeFiles = await findRouteFiles(ROUTES_DIRECTORY);
 
 	for (const filePath of routeFiles) {
-		const prefix = getRoutePrefix(filePath);
+		const prefix = getRoutePrefix(ROUTES_DIRECTORY, filePath);
 
 		const module = await import(
 			pathToFileURL(filePath).href

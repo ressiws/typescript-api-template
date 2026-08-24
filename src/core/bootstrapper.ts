@@ -34,7 +34,7 @@ export class Bootstrapper {
 
 		const totalDuration = Math.round(performance.now() - totalStart);
 
-		logger.success(`API ready in ${this.formatDuration(totalDuration)}`);
+		logger.success(`API ready in ${totalDuration}ms`);
 	}
 
 
@@ -63,9 +63,5 @@ export class Bootstrapper {
 		const dots = ".".repeat(Math.max(1, width - stepName.length));
 
 		return `${stepName} ${dots} ${durationMs}ms`;
-	}
-
-	private static formatDuration(durationMs: number): string {
-		return `${durationMs}ms`;
 	}
 }

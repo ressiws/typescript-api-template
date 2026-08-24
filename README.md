@@ -1,15 +1,15 @@
-# TypeScript API Template
+# TypeScript Web Server Template
 
-A production-oriented API template built with **TypeScript** and **Fastify**.
+A production-oriented Web Server template built with **TypeScript** and **Fastify**.
 
-The template provides a structured foundation for building APIs without forcing application-specific business logic into the base.
+The template provides a structured foundation for building Web Servers without forcing application-specific business logic into the base.
 
 ## Features
 
 * TypeScript
 * Fastify
 * Automatic route discovery
-* Versioned API routes
+* Versioned Web Server routes
 * Modular middleware architecture
 * CORS configuration
 * Security headers with Helmet
@@ -148,9 +148,9 @@ becomes:
 
 Nested route directories are supported.
 
-## API Versioning
+## Server Versioning
 
-API versions are represented by directories:
+Server versions are represented by directories:
 
 ```text
 routes/
@@ -203,7 +203,7 @@ Application-specific authentication and authorization should be added according 
 
 See [`SECURITY.md`](SECURITY.md) for security policies and vulnerability reporting.
 
-## API Documentation
+## Web Server Documentation
 
 OpenAPI / Swagger documentation is available during development at:
 
@@ -211,7 +211,7 @@ OpenAPI / Swagger documentation is available during development at:
 /docs
 ```
 
-The documentation should be generated from the API schemas rather than manually maintained whenever possible.
+The documentation should be generated from the Web Server schemas rather than manually maintained whenever possible.
 
 ## Logging
 
@@ -223,7 +223,7 @@ Example:
 [HTTP] INFO | Request completed
 ```
 
-Sensitive values such as passwords, tokens, API keys and authorization headers are redacted automatically.
+Sensitive values such as passwords, tokens, Web Server keys and authorization headers are redacted automatically.
 
 Development logs are formatted for readability, while production logging remains machine-readable.
 

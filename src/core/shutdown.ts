@@ -1,4 +1,4 @@
-import * as logger from "../logging/logger.js";
+import logger from "../logging/logger.js";
 
 type ShutdownHandler = () => Promise<void> | void;
 
@@ -21,11 +21,13 @@ export class ShutdownManager {
 
 		process.once("uncaughtException", (error) => {
 			logger.fatal(`Uncaught exception: ${error}`);
+			process.exitCode = 1;
 			void this.shutdown("uncaughtException", 1);
 		});
 
 		process.once("unhandledRejection", (reason) => {
 			logger.fatal(`Unhandled promise rejection: ${reason}`);
+			process.exitCode = 1;
 			void this.shutdown("unhandledRejection", 1);
 		});
 	}

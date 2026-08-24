@@ -9,7 +9,8 @@
 		"start": "node dist/index.js",
 		"dev": "tsx watch src/index.ts",
 		"lint": "eslint src",
-		"lint:fix": "eslint src --fix"
+		"lint:fix": "eslint src --fix",
+		"typecheck": "tsc --noEmit"
 	},
 	"repository": {
 		"type": "git",
@@ -32,22 +33,20 @@
 	},
 	"homepage": "https://github.com/ressiws/typescript-api-template#readme",
 	"dependencies": {
-		"@fastify/compress": "^9.2.0",
-		"@fastify/cors": "^11.3.0",
-		"@fastify/helmet": "^13.1.1",
-		"@fastify/rate-limit": "^11.2.0",
-		"@fastify/swagger": "^9.8.1",
-		"@fastify/swagger-ui": "^6.1.1",
-		"fastify": "^5.12.1",
-		"fastify-plugin": "^6.0.0",
-		"pino": "^10.3.1"
+		"@fastify/compress": "9.2.0",
+		"@fastify/cors": "11.3.0",
+		"@fastify/helmet": "13.1.1",
+		"@fastify/rate-limit": "11.2.0",
+		"@fastify/swagger": "9.8.1",
+		"@fastify/swagger-ui": "6.1.1",
+		"fastify": "5.12.1"
 	},
 	"devDependencies": {
-		"@types/node": "^25.0.3",
-		"@typescript-eslint/eslint-plugin": "^8.50.0",
-		"@typescript-eslint/parser": "^8.50.0",
-		"eslint": "^9.39.2",
-		"tsx": "^4.21.0",
-		"typescript": "^5.9.3"
+		"@types/node": "25.0.3",
+		"@typescript-eslint/eslint-plugin": "8.50.0",
+		"@typescript-eslint/parser": "8.50.0",
+		"eslint": "9.39.2",
+		"tsx": "4.21.0",
+		"typescript": "5.9.3"
 	}
 }

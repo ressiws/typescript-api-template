@@ -15,21 +15,22 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: "20"
+      uses: actions/checkout@v4
 
     - name: Setup pnpm
-      run: npm install -g pnpm
+      uses: pnpm/action-setup@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: "20"
+        cache: "pnpm"
 
     - name: Install dependencies
-      run: pnpm install
+      run: pnpm install --frozen-lockfile
 
     - name: TypeScript check
-      run: pnpm exec tsc --noEmit
+      run: pnpm typecheck
 
     - name: Run ESLint
-      run: pnpm exec eslint "src/**/*.{ts,js}"
+      run: pnpm lint

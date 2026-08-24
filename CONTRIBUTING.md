@@ -38,7 +38,6 @@ pnpm build
 Run the available tests and static checks:
 
 ```bash
-pnpm test
 pnpm lint
 pnpm typecheck
 ```

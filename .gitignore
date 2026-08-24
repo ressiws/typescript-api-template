@@ -11,4 +11,17 @@ package-lock.json
 
 # Environment Variables:
 .env
-logs/2026-08-21.log
+.env.*
+!.env.example
+
+# Logs:
+logs/*.log
+
+# IDE:
+.idea/
+*.swp
+*.swo
+
+# OS:
+.DS_Store
+Thumbs.db

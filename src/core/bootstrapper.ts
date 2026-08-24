@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { createApp } from "../app.js";
 import { loadConfig } from "../config/index.js";
-import * as logger from "../logging/logger.js";
+import logger from "../logging/logger.js";
 import { HttpServer } from "./httpServer.js";
 import { ShutdownManager } from "./shutdown.js";
 
@@ -34,7 +34,7 @@ export class Bootstrapper {
 
 		const totalDuration = Math.round(performance.now() - totalStart);
 
-		logger.success(`API ready in ${totalDuration}ms`);
+		logger.info(`API ready in ${totalDuration}ms`);
 	}
 
 

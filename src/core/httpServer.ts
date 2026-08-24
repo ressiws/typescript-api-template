@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import { config } from "../config/index.js";
-import * as logger from "../logging/logger.js";
+import logger from "../logging/logger.js";
 
 export class HttpServer {
 	constructor(private readonly app: FastifyInstance) { }

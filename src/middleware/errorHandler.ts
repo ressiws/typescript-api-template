@@ -88,6 +88,19 @@ function getErrorMessage(error: unknown, statusCode: number): string {
 }
 
 export async function registerErrorHandler(app: FastifyInstance): Promise<void> {
+	app.setNotFoundHandler((request, reply) => {
+		const response: ErrorResponse = {
+			error: {
+				code: "NOT_FOUND",
+				statusCode: 404,
+				message: `Route ${request.method}:${request.url} not found`,
+				requestId: request.id,
+			},
+		};
+
+		return reply.status(404).send(response);
+	});
+
 	app.setErrorHandler((error, request, reply) => {
 		const statusCode = getStatusCode(error);
 		const code = getErrorCode(error, statusCode);

@@ -4,7 +4,7 @@ import path from "node:path";
 import { performance } from "node:perf_hooks";
 import { pathToFileURL } from "node:url";
 
-import { logger } from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 import type { Router } from "../routing/router.js";
 import { __dirname } from "../utils/paths.js";
 
@@ -70,12 +70,7 @@ function getRoutePrefix(filePath: string): string {
 export async function loadRoutes(app: FastifyInstance): Promise<void> {
 	const start = performance.now();
 
-	logger.info(
-		{
-			category: "SYSTEM",
-		},
-		"Loading routes",
-	);
+	logger.info("Loading routes");
 
 	const routeFiles = await findRouteFiles(ROUTES_DIRECTORY);
 
@@ -94,18 +89,8 @@ export async function loadRoutes(app: FastifyInstance): Promise<void> {
 
 		module.router.register(app, prefix);
 
-		logger.info(
-			{
-				category: "HTTP",
-			},
-			`Route loaded ${prefix}`,
-		);
+		logger.info(`Route loaded ${prefix}`);
 	}
 
-	logger.info(
-		{
-			category: "SYSTEM",
-		},
-		`Routes loaded ${routeFiles.length} routes in ${Math.round(performance.now() - start)}ms`,
-	);
+	logger.info(`Routes loaded ${routeFiles.length} routes in ${Math.round(performance.now() - start)}ms`);
 }

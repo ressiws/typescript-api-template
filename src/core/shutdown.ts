@@ -1,4 +1,4 @@
-import { logger } from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 
 type ShutdownHandler = () => Promise<void> | void;
 
@@ -20,13 +20,12 @@ export class ShutdownManager {
 		});
 
 		process.once("uncaughtException", (error) => {
-			logger.fatal({ category: "SYSTEM", err: error, }, "Uncaught exception",);
-
+			logger.fatal(`Uncaught exception: ${error}`);
 			void this.shutdown("uncaughtException", 1);
 		});
 
 		process.once("unhandledRejection", (reason) => {
-			logger.fatal({ category: "SYSTEM", err: reason, }, "Unhandled promise rejection",);
+			logger.fatal(`Unhandled promise rejection: ${reason}`);
 			void this.shutdown("unhandledRejection", 1);
 		});
 	}
@@ -38,17 +37,17 @@ export class ShutdownManager {
 
 		this.shuttingDown = true;
 
-		logger.warn({ category: "SYSTEM", reason, }, "Shutdown requested",);
+		logger.warn(`Shutdown requested: ${reason}`);
 
 		try {
 			for (const handler of this.handlers) {
 				await handler();
 			}
 
-			logger.info({ category: "SYSTEM", reason, }, "Shutdown completed",);
+			logger.info(`Shutdown completed: ${reason}`);
 		}
 		catch (error) {
-			logger.error({ category: "SYSTEM", err: error, }, "Shutdown failed",);
+			logger.error(`Shutdown failed: ${error}`);
 			exitCode = 1;
 		}
 

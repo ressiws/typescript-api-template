@@ -1,10 +1,10 @@
 import { Bootstrapper } from "./core/bootstrapper.js";
-import { logger } from "./logging/logger.js";
+import * as logger from "./logging/logger.js";
 
 try {
 	await Bootstrapper.boot();
 }
 catch (error) {
-	logger.error({ category: "SYSTEM", err: error, }, "Application failed to start",);
+	logger.error(`Application failed to start: ${error}`);
 	process.exitCode = 1;
 }

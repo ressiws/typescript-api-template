@@ -1,176 +1,104 @@
-import fs from "node:fs";
-import path from "node:path";
-import pino from "pino";
+/* eslint-disable no-console */
 
-import type { LogCategory } from "../types/logging.js";
+/**
+ * thanks to:
+ * Copyright 2025 DarkenLM (https://github.com/darkenlm)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-const LOG_DIR = path.resolve("logs");
-
-fs.mkdirSync(LOG_DIR, { recursive: true });
-
-const isProduction = process.env.NODE_ENV === "production";
-
-const logFile = pino.destination({
-	dest: path.join(
-		LOG_DIR,
-		`${new Date().toISOString().slice(0, 10)}.log`,
-	),
-	append: true,
-	mkdir: true,
-});
-
-const RESET = "\x1b[0m";
-
-const COLORS = {
-	timestamp: "\x1b[90m",
-	category: "\x1b[36m",
-	success: "\x1b[32m",
-	info: "\x1b[36m",
-	warn: "\x1b[33m",
-	error: "\x1b[31m",
-	debug: "\x1b[35m",
-	context: "\x1b[90m",
+//#region ============== Constants ===============
+const LEVELS = {
+	fatal: 1,
+	error: 2,
+	warn: 3,
+	info: 4,
+	debug: 5,
+	success: 6
 } as const;
+type Level = typeof LEVELS[keyof typeof LEVELS];
 
-const LEVELS: Record<number, keyof typeof COLORS> = {
-	20: "debug",
-	30: "info",
-	35: "success",
-	40: "warn",
-	50: "error",
+const _LEVEL_PROPS = {
+	[LEVELS.debug]: { color: "35", label: "DEBUG" },
+	[LEVELS.info]: { color: "34", label: "INFO" },
+	[LEVELS.warn]: { color: "33", label: "WARN" },
+	[LEVELS.error]: { color: "91", label: "ERROR" },
+	[LEVELS.fatal]: { color: "31", label: "FATAL" },
+	[LEVELS.success]: { color: "32", label: "SUCCESS" }
 };
 
-function formatValue(value: unknown): string {
-	if (typeof value === "string") {
-		return `"${value}"`;
-	}
+const LOGGER_MIN_LEVEL = LEVELS.fatal;
+const LOGGER_MAX_LEVEL = LEVELS.debug;
+//#endregion ============= Constants ===============
 
-	if (value instanceof Error) {
-		return `"${value.message}"`;
-	}
+//#region ============== Variables ===============
+let g_loggingEnabled = true;
+let g_errorLoggingEnabled = true;
+let g_loggingLevel: Level = LEVELS.info;
+//#endregion ============= Variables ===============
 
-	try {
-		return JSON.stringify(value);
-	} catch {
-		return "[Unserializable]";
-	}
+//#region ============== Functions ===============
+function _log(level: Level, ...args: unknown[]) {
+	if (!g_loggingEnabled && (g_errorLoggingEnabled && (level !== LEVELS.error && level !== LEVELS.fatal))) return;
+	if (typeof level !== "number" || !_LEVEL_PROPS[level]) throw new Error("Invalid log level");
+	if (level > g_loggingLevel) return;
+
+	const { color, label } = _LEVEL_PROPS[level];
+	const timestamp = new Date().toISOString();
+	const formattedArgs = args.map(arg => (typeof arg === "object" ? arg : `\x1b[${color}m${arg}\x1b[0m`));
+	console.log(`\x1b[${color}m[${timestamp}] [${label}]\x1b[0m`, ...formattedArgs);
 }
 
-function formatContext(entry: Record<string, unknown>): string {
-	const excluded = new Set([
-		"level",
-		"time",
-		"category",
-		"msg",
-	]);
-
-	const values = Object.entries(entry)
-		.filter(([key]) => !excluded.has(key))
-		.map(([key, value]) => `${key}: ${formatValue(value)}`);
-
-	return values.length > 0
-		? `${COLORS.context}{ ${values.join(", ")} }${RESET}`
-		: "";
+function debug(...args: unknown[]) {
+	_log(LEVELS.debug, ...args);
 }
 
-function formatTimestamp(value: unknown): string {
-	if (typeof value === "number") {
-		return new Date(value).toUTCString();
-	}
-
-	if (typeof value === "string") {
-		const numericValue = Number(value);
-
-		if (!Number.isNaN(numericValue)) {
-			return new Date(numericValue).toUTCString();
-		}
-
-		const parsed = new Date(value);
-
-		if (!Number.isNaN(parsed.getTime())) {
-			return parsed.toUTCString();
-		}
-	}
-
-	return "Invalid Date";
+function info(...args: unknown[]) {
+	_log(LEVELS.info, ...args);
 }
 
-function formatConsoleLog(line: string): string {
-	try {
-		const entry = JSON.parse(line) as Record<string, unknown>;
-		const timestamp = formatTimestamp(entry.time);
-		const level = LEVELS[Number(entry.level)] ?? "info";
-		const category = String(entry.category ?? "SYSTEM");
-		const message = String(entry.msg ?? "");
-		const context = formatContext(entry);
-
-		return [
-			`${COLORS.timestamp}[${timestamp}]${RESET}`,
-			`${COLORS.category}[${category}]${RESET}`,
-			`${COLORS[level]}${level.toUpperCase().padEnd(5)}${RESET}`,
-			"|",
-			message,
-			context,
-		]
-			.filter(Boolean)
-			.join(" ");
-	} catch {
-		return line;
-	}
+function warn(...args: unknown[]) {
+	_log(LEVELS.warn, ...args);
 }
 
-const consoleStream = isProduction
-	? process.stdout
-	: {
-		write(chunk: string): boolean {
-			process.stdout.write(
-				formatConsoleLog(chunk.trimEnd()) + "\n",
-			);
+function error(...args: unknown[]) {
+	_log(LEVELS.error, ...args);
+}
 
-			return true;
-		},
-	};
+function fatal(...args: unknown[]) {
+	_log(LEVELS.fatal, ...args);
+	process.exit(1);
+}
 
-export const logger = pino(
-	{
-		level:
-			process.env.LOG_LEVEL ??
-			(isProduction ? "info" : "debug"),
+function success(...args: unknown[]) {
+	_log(LEVELS.success, ...args);
+}
 
-		base: null,
+function setLoggingEnabled(enabled: boolean, allowError = true) {
+	g_loggingEnabled = enabled;
+	g_errorLoggingEnabled = allowError;
+}
 
-		customLevels: {
-			success: 35,
-		},
+function setLoggerLevel(level: Level) {
+	g_loggingLevel = level;
+}
+//#endregion ============= Functions ===============
 
-		timestamp: pino.stdTimeFunctions.isoTime,
+//#region ============== Exports ===============
+export {
 
-		redact: {
-			paths: [
-				"password",
-				"passwordConfirmation",
-				"token",
-				"accessToken",
-				"refreshToken",
-				"sessionToken",
-				"secret",
-				"apiKey",
-				"req.headers.authorization",
-				"req.headers.cookie",
-			],
-			censor: "[REDACTED]",
-		},
-	},
+	debug, error, fatal, info, Level,
 
-	pino.multistream([
-		{
-			stream: consoleStream,
-		},
-		{
-			stream: logFile,
-		},
-	]),
-);
-
-export type { LogCategory };
-
+	LEVELS, LOGGER_MAX_LEVEL, LOGGER_MIN_LEVEL, setLoggerLevel, setLoggingEnabled, success, warn
+};
+//#endregion ============= Exports ===============

@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { logger } from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 
 const IGNORED_PATHS = [
 	"/docs",
@@ -17,16 +17,6 @@ export async function registerHttpLogger(app: FastifyInstance): Promise<void> {
 			return;
 		}
 
-		logger.info(
-			{
-				category: "HTTP",
-				requestId: request.id,
-				method: request.method,
-				url: request.url,
-				statusCode: reply.statusCode,
-				durationMs: reply.elapsedTime,
-			},
-			"Request completed",
-		);
+		logger.info(`${request.method} Request completed: ${request.url} with status ${reply.statusCode} in ${reply.elapsedTime}ms`);
 	});
 }

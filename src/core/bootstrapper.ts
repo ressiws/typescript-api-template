@@ -1,7 +1,7 @@
 import { performance } from "node:perf_hooks";
 import { createApp } from "../app.js";
 import { loadConfig } from "../config/index.js";
-import { logger } from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 import { HttpServer } from "./httpServer.js";
 import { ShutdownManager } from "./shutdown.js";
 
@@ -9,7 +9,7 @@ export class Bootstrapper {
 	public static async boot(): Promise<void> {
 		const totalStart = performance.now();
 
-		logger.info({ category: "SYSTEM", }, "Starting API..",);
+		logger.info("Starting API..",);
 
 		ShutdownManager.registerProcessListeners();
 
@@ -34,12 +34,7 @@ export class Bootstrapper {
 
 		const totalDuration = Math.round(performance.now() - totalStart);
 
-		logger.success(
-			{
-				category: "SYSTEM",
-			},
-			`API ready in ${this.formatDuration(totalDuration)}`,
-		);
+		logger.success(`API ready in ${this.formatDuration(totalDuration)}`);
 	}
 
 
@@ -50,25 +45,14 @@ export class Bootstrapper {
 			const result = await stepFn();
 			const duration = Math.round(performance.now() - start);
 
-			logger.info(
-				{
-					category: "SYSTEM",
-				},
-				`${this.formatStep(stepName, duration)}`,
-			);
+			logger.info(`${this.formatStep(stepName, duration)}`);
 
 			return result;
 		}
 		catch (error) {
 			const duration = Math.round(performance.now() - start);
 
-			logger.error(
-				{
-					category: "SYSTEM",
-					err: error,
-				},
-				`${this.formatStep(stepName, duration)} FAILED`,
-			);
+			logger.error(`${this.formatStep(stepName, duration)} FAILED: ${error instanceof Error ? error.message : String(error)}`);
 
 			throw error;
 		}

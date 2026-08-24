@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { logger } from "../logging/logger.js";
+import * as logger from "../logging/logger.js";
 
 interface FastifyLikeError {
 	message?: string;
@@ -64,10 +64,7 @@ function getErrorCode(
 	}
 }
 
-function getErrorMessage(
-	error: unknown,
-	statusCode: number,
-): string {
+function getErrorMessage(error: unknown, statusCode: number): string {
 	if (statusCode >= 500) {
 		return "Internal server error";
 	}
@@ -96,16 +93,7 @@ export async function registerErrorHandler(app: FastifyInstance): Promise<void> 
 		const code = getErrorCode(error, statusCode);
 		const message = getErrorMessage(error, statusCode);
 
-		logger.error(
-			{
-				category: "HTTP",
-				requestId: request.id,
-				statusCode,
-				code,
-				err: error,
-			},
-			"Request failed",
-		);
+		logger.error(`Request failed with status ${statusCode} and code ${code} for request ${request.method} ${request.url} with requestId ${request.id}`);
 
 		const response: ErrorResponse = {
 			error: {

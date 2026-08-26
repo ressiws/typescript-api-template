@@ -6,10 +6,15 @@ import type {
 
 import type { HttpMethod } from "../types/routes.js";
 
+interface RouteResult {
+	status: number;
+	data: unknown;
+}
+
 type RouteHandler = (
 	request: FastifyRequest,
 	reply: FastifyReply,
-) => unknown | Promise<unknown>;
+) => unknown | RouteResult | Promise<unknown | RouteResult>;
 
 interface Route {
 	method: HttpMethod;
@@ -58,7 +63,21 @@ export function createRouter(): Router {
 				app.route({
 					method: route.method,
 					url: routePath,
-					handler: route.handler,
+					handler: async (request, reply) => {
+						const result = await route.handler(request, reply);
+
+						if (
+							result &&
+							typeof result === "object" &&
+							"status" in result &&
+							"data" in result
+						) {
+							const { status, data } = result as RouteResult;
+							return reply.status(status).send(data);
+						}
+
+						return result;
+					},
 				});
 			}
 		},
